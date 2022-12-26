@@ -54,7 +54,11 @@
                 // split the data set into ohlc and volume
                 TO_diff = [],
                     ITM_CE_ltp = [],
-                    ITM_PE_ltp = []
+                    ITM_PE_ltp = [],
+                    ITM_CE_ltp_helper = [],
+                    ITM_PE_ltp_helper = [],
+                    ITM_CE_ltp_Final = [],
+                    ITM_PE_ltp_Final = []
                 dataLength = data.length,
                     // set the allowed units for data grouping
                     groupingUnits = [[
@@ -84,6 +88,87 @@
                     ]);
                 }
 
+                for (var i = 0; i < ITM_CE_ltp.length; i++) {
+                    for (var j = 0; j < ITM_CE_ltp[0].length; j++) {
+                        if (j == 0) {
+                            ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
+                        }
+                        else if (j == 1) {
+                            if (i != 0) {
+                                if (ITM_CE_ltp[i][j] == 0) {
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i - 1][j])
+                                }
+                                else {
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
+                                }
+                            }
+                            else if (i == 0) {
+                                if (ITM_CE_ltp[i][j] == 0) {
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i + 1][j])
+                                }
+                                else {
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
+                                }
+                            }
+                        }
+                    }
+                    ITM_CE_ltp_Final.push(ITM_CE_ltp_helper)
+                    ITM_CE_ltp_helper = []
+                }
+
+                for (var i = 0; i < ITM_PE_ltp.length; i++) {
+                    for (var j = 0; j < ITM_PE_ltp[0].length; j++) {
+                        if (j == 0) {
+                            ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
+                        }
+                        else if (j == 1) {
+                            if (i != 0) {
+                                if (ITM_PE_ltp[i][j] == 0) {
+                                    // temp = i
+                                    // for (var a = (i + 1); a < ITM_PE_ltp.length; a++) {
+                                    //     if (ITM_PE_ltp[a][j] != 0) {
+                                    //         i = a
+                                    //         a = ITM_PE_ltp.length
+                                    //     }
+                                    // }
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i - 1][j])
+                                }
+                                else {
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
+                                }
+                            }
+                            else if (i == 0) {
+                                if (ITM_PE_ltp[i][j] == 0) {
+                                    // temp_1 = i
+                                    // for (var a = (i + 1); a < ITM_PE_ltp.length; a++) {
+                                    //     if (ITM_PE_ltp[a][j] != 0) {
+                                    //         i = a
+                                    //         a = ITM_PE_ltp.length
+                                    //     }
+                                    // }
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i + 1][j])
+                                }
+                                else {
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
+                                }
+                            }
+                        }
+                    }
+                    ITM_PE_ltp_Final.push(ITM_PE_ltp_helper)
+                    ITM_PE_ltp_helper = []
+                }
+
+                for (var i = 0; i < ITM_PE_ltp_Final.length; i++) {
+                    if (ITM_PE_ltp_Final[i][1] == 0) {
+                        console.log(i)
+                    }
+                }
+
+                for (var i = 0; i < ITM_CE_ltp_Final.length; i++) {
+                    if (ITM_CE_ltp_Final[i][1] == 0) {
+                        console.log(i)
+                    }
+                }
 
                 // create the chart
                 highchart = Highcharts.stockChart('chart', {
@@ -164,7 +249,7 @@
                     tooltip: {
                         enabled: true,
                         positioner: function () {
-                            return { x: 0, y: 0 };
+                            return { x: 500, y: 0 };
                         },
                         backgroundColor: '#1c1c1c',
                         borderColor: '#1c1c1c',
@@ -200,19 +285,19 @@
                             }
                         },
                         {
-                            type: 'spline',
+                            type: 'line',
                             name: 'ITM_CE_ltp',
                             color: 'rgb(255, 108, 108)',
-                            data: ITM_CE_ltp,
+                            data: ITM_CE_ltp_Final,
                             dataGrouping: {
                                 enabled: false,
                             }
                         },
                         {
-                            type: 'spline',
+                            type: 'line',
                             name: 'ITM_PE_ltp',
                             color: 'rgb(149, 177, 66)',
-                            data: ITM_PE_ltp,
+                            data: ITM_PE_ltp_Final,
                             yAxis: 1,
                             dataGrouping: {
                                 enabled: false,
