@@ -248,8 +248,13 @@
                     ],
                     tooltip: {
                         enabled: true,
-                        positioner: function () {
-                            return { x: 500, y: 0 };
+                        positioner: function (labelWidth, labelHeight,point) {
+                            var tooltipX = ($(document).width() / 2 ) - 250;
+                            var tooltipY = point.plotY - 40;
+                            return {
+                                x: tooltipX,
+                                y: tooltipY
+                            };
                         },
                         backgroundColor: '#1c1c1c',
                         borderColor: '#1c1c1c',
