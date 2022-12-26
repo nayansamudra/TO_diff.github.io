@@ -170,147 +170,169 @@
                     }
                 }
 
-                // create the chart
-                highchart = Highcharts.stockChart('chart', {
-                    rangeSelector: {
-                        enabled: false
-                    },
-                    navigator: {
-                        enabled: true
-                    },
-                    scrollbar: {
-                        enabled: true
-                    },
-                    legend: {
-                        itemStyle: {
-                            color: '#000000',
-                            fontWeight: 'bold'
-                        }
-                    },
+                Highcharts.wrap(Highcharts.Navigator.prototype, 'render', function (proceed) {
+                    proceed.apply(this, [].slice.call(arguments, 1));
+                    if (!this.background) {
+                        this.background = this.chart.renderer
+                            .rect()
+                            .attr({
+                                zIndex: 7,
+                                fill: '#1c1c1c'
+                            })
+                            .add();
+                    }
+                    this.background.attr(this.navigatorGroup.getBBox());
+                });
+            
+                
 
 
-                    title: {
-                        text: '',
-                        align: 'left',
-                        style: {
-                            "color": "White",
-                            "fontSize": "20px",
-                            "fontWeight": "bold",
-                            "fontFamily": "Outfit"
-                        }
-                    },
-                    chart: {
-                        backgroundColor: '#1c1c1c',
-                    },
+            // create the chart
+            highchart = Highcharts.stockChart('chart', {
+                rangeSelector: {
+                    enabled: false
+                },
+                navigator: {
+                    enabled: true,
+                    maskFill: '#1c1c1c',
+                    series: {
+                        color: '#1c1c1c',
+                    }
+                },
+                scrollbar: {
+                    enabled: true,
+                },
+                legend: {
+                    itemStyle: {
+                        color: '#000000',
+                        fontWeight: 'bold'
+                    }
+                },
 
-                    toolbar: {
-                        enabled: false
-                    },
-                    yAxis: [
+
+                title: {
+                    text: '',
+                    align: 'left',
+                    style: {
+                        "color": "White",
+                        "fontSize": "20px",
+                        "fontWeight": "bold",
+                        "fontFamily": "Outfit"
+                    }
+                },
+                chart: {
+                    backgroundColor: '#1c1c1c',
+                },
+
+                toolbar: {
+                    enabled: false
+                },
+                yAxis: [
+                    {
+                        labels:
                         {
-                            labels:
-                            {
-                                formatter: function () {
-                                    return '';
-                                }
-                            },
-                            height: '33.33%',
-                            lineWidth: 0,
-                            gridLineWidth: 0,
-                            resize: {
-                                enabled: true
+                            formatter: function () {
+                                return '';
                             }
                         },
-                        {
-                            labels: {
-                                formatter: function () {
-                                    return '';
-                                }
-                            },
-                            top: '33.33%',
-                            height: '33.33%',
-                            offset: 0,
-                            lineWidth: 0,
-                            gridLineWidth: 0,
-                        },
-                        {
-                            labels: {
-                                formatter: function () {
-                                    return '';
-                                }
-                            },
-                            top: '66.67%',
-                            height: '33.33%',
-                            offset: 0,
-                            lineWidth: 0,
-                            gridLineWidth: 0,
-                        }
-                    ],
-                    tooltip: {
-                        enabled: true,
-                        positioner: function (labelWidth, labelHeight,point) {
-                            var tooltipX = ($(document).width() / 2 ) - 250;
-                            var tooltipY = point.plotY - 40;
-                            return {
-                                x: tooltipX,
-                                y: tooltipY
-                            };
-                        },
-                        backgroundColor: '#1c1c1c',
-                        borderColor: '#1c1c1c',
-                        borderWidth: 0,
-                        style: {
-                            color: 'white'
-                        },
-                        split: true,
-                        formatter: function () {
-                            tooltipArray = ['<b>' + moment.unix(this.x).format('h:mm:ss a') + '</b>&nbsp;&nbsp;' + '<b>TO_diff:</b>&nbsp;' + this.points[0].y + '&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[1].y + '&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[2].y]
-                            return tooltipArray;
+                        height: '33.33%',
+                        lineWidth: 0,
+                        gridLineWidth: 0,
+                        resize: {
+                            enabled: true
                         }
                     },
-                    xAxis: {
-                        type: 'datetime',
+                    {
                         labels: {
                             formatter: function () {
-                                return moment.unix(this.value).format('h:mm a');
-                            },
+                                return '';
+                            }
+                        },
+                        top: '33.33%',
+                        height: '33.33%',
+                        offset: 0,
+                        lineWidth: 0,
+                        gridLineWidth: 0,
+                    },
+                    {
+                        labels: {
+                            formatter: function () {
+                                return '';
+                            }
+                        },
+                        top: '66.67%',
+                        height: '33.33%',
+                        offset: 0,
+                        lineWidth: 0,
+                        gridLineWidth: 0,
+                    }
+                ],
+                tooltip: {
+                    enabled: true,
+                    positioner: function (labelWidth, labelHeight, point) {
+                        var tooltipX = ($(document).width() / 2) - 250;
+                        var tooltipY = point.plotY - 40;
+                        return {
+                            x: tooltipX,
+                            y: tooltipY
+                        };
+                    },
+                    backgroundColor: '#1c1c1c',
+                    borderColor: '#1c1c1c',
+                    borderWidth: 0,
+                    style: {
+                        color: 'white'
+                    },
+                    split: true,
+                    formatter: function () {
+                        tooltipArray = ['<b>' + moment.unix(this.x).format('h:mm:ss a') + '</b>&nbsp;&nbsp;' + '<b>TO_diff:</b>&nbsp;' + this.points[0].y + '&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[1].y + '&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[2].y]
+                        return tooltipArray;
+                    }
+                },
+                xAxis: {
+                    type: 'datetime',
+                    labels: {
+                        formatter: function () {
+                            return moment.unix(this.value).format('h:mm a');
+                        },
+                    }
+                },
+                series: [
+                    {
+                        type: 'column',
+                        name: 'TO_diff',
+                        color: 'rgb(255, 108, 108)',
+                        data: TO_diff,
+                        yAxis: 2,
+                        color: 'rgb(66, 177, 66)',
+                        negativeColor: 'rgb(255, 108, 108)',
+                        dataGrouping: {
+                            enabled: false,
                         }
                     },
-                    series: [
-                        {
-                            type: 'column',
-                            name: 'TO_diff',
-                            color: 'rgb(255, 108, 108)',
-                            data: TO_diff,
-                            yAxis: 2,
-                            color: 'rgb(66, 177, 66)',
-                            negativeColor: 'rgb(255, 108, 108)',
-                            dataGrouping: {
-                                enabled: false,
-                            }
-                        },
-                        {
-                            type: 'line',
-                            name: 'ITM_CE_ltp',
-                            color: 'rgb(149, 177, 66)',
-                            data: ITM_CE_ltp_Final,
-                            dataGrouping: {
-                                enabled: false,
-                            }
-                        },
-                        {
-                            type: 'line',
-                            name: 'ITM_PE_ltp',
-                            color: 'rgb(255, 108, 108)',
-                            data: ITM_PE_ltp_Final,
-                            yAxis: 1,
-                            dataGrouping: {
-                                enabled: false,
-                            }
+                    {
+                        type: 'line',
+                        name: 'ITM_CE_ltp',
+                        // color: 'rgb(255, 108, 108)',
+                        color: 'rgb(149, 177, 66)',
+                        data: ITM_CE_ltp_Final,
+                        dataGrouping: {
+                            enabled: false,
                         }
-                    ]
-                });
+                    },
+                    {
+                        type: 'line',
+                        name: 'ITM_PE_ltp',
+                        color: 'rgb(255, 108, 108)',
+                        data: ITM_PE_ltp_Final,
+                        yAxis: 1,
+                        dataGrouping: {
+                            enabled: false,
+                        }
+                    }
+                ]
             });
+        });
         })
     </script>
 
